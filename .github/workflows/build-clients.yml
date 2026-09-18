@@ -105,7 +105,7 @@ jobs:
             test_el: true
             test_vc: false
           - env: |-
-              CORE_FILES=grandine-cl-only.yml:lighthouse-vc-only.yml:reth.yml
+              CORE_FILES=grandine-cl-only.yml:grandine-vc-only.yml:reth.yml
               GRANDINE_DOCKERFILE=Dockerfile.source
               FEE_RECIPIENT=0xDccf8451070a86183eE70D330C4c43b686E9CF86
             test_cl: true

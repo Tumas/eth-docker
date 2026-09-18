@@ -4528,33 +4528,38 @@ keys() {
 __adjust_grandine_permissions() {
   local datadir_owner
   local datadir_volume
+  local volume_name
 
   __value="${COMPOSE_FILE}"
   if [[ ! "${__value}" =~ grandine ]]; then
     return 0
   fi
 
-  if [[ "${__value}" =~ grandine-plugin ]]; then
-    datadir_owner=10001
-  else
-    datadir_owner=10002
-  fi
+  for volume_name in grandineconsensus-data grandinevalidator-data; do
+    if [[ "${volume_name}" = "grandinevalidator-data" ]]; then
+      datadir_owner=10000
+    elif [[ "${__value}" =~ grandine-plugin ]]; then
+      datadir_owner=10001
+    else
+      datadir_owner=10002
+    fi
 
-  datadir_volume="$(__dodocker volume ls -q -f "name=^$(basename "$(realpath .)" | tr '[:upper:]' '[:lower:]')_grandineconsensus-data$")"
-  if [[ -z "${datadir_volume}" ]]; then
-    return 0
-  fi
+    datadir_volume="$(__dodocker volume ls -q -f "name=^$(basename "$(realpath .)" | tr '[:upper:]' '[:lower:]')_${volume_name}$")"
+    if [[ -z "${datadir_volume}" ]]; then
+      continue
+    fi
 
-  __dodocker run --rm \
-    --user root \
-    -v "${datadir_volume}:/var/lib/grandine" \
-    alpine:3 \
-    sh -c "
-      if find /var/lib/grandine \( \! -user ${datadir_owner} -o \! -group ${datadir_owner} \) -print -quit | grep -q .; then
-        echo 'Fixing ownership of Grandine volume'
-        chown -R ${datadir_owner}:${datadir_owner} /var/lib/grandine
-      fi
-    "
+    __dodocker run --rm \
+      --user root \
+      -v "${datadir_volume}:/var/lib/grandine" \
+      alpine:3 \
+      sh -c "
+        if find /var/lib/grandine \( \! -user ${datadir_owner} -o \! -group ${datadir_owner} \) -print -quit | grep -q .; then
+          echo 'Fixing ownership of Grandine volume'
+          chown -R ${datadir_owner}:${datadir_owner} /var/lib/grandine
+        fi
+      "
+  done
 }
 
 
@@ -4894,12 +4899,14 @@ __query_validator_client() {
     choices+=("lodestar-vc-only.yml" "Lodestar validator client")
     choices+=("nimbus-vc-only.yml" "Nimbus validator client")
     choices+=("prysm-vc-only.yml" "Prysm validator client")
+    choices+=("grandine-vc-only.yml" "Grandine validator client")
   else
     choices+=("teku-vc-only.yml" "Teku validator client")
     choices+=("lighthouse-vc-only.yml" "Lighthouse validator client")
     choices+=("lodestar-vc-only.yml" "Lodestar validator client")
     choices+=("nimbus-vc-only.yml" "Nimbus validator client")
     choices+=("prysm-vc-only.yml" "Prysm validator client")
+    choices+=("grandine-vc-only.yml" "Grandine validator client")
   fi
 
   num_items=$(( ${#choices[@]} / 2 ))

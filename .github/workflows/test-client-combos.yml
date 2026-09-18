@@ -85,6 +85,14 @@ jobs:
             test_cl: true
             test_el: true
             test_vc: true
+          - label1: test-grandine
+            label2: na
+            env: |-
+              CORE_FILES=grandine-cl-only.yml:grandine-vc-only.yml:nimbus-el.yml:mev-boost.yml
+              FEE_RECIPIENT=0xDccf8451070a86183eE70D330C4c43b686E9CF86
+            test_cl: true
+            test_el: true
+            test_vc: true
           - label1: test-grandine-plugin
             label2: na
             env: |-

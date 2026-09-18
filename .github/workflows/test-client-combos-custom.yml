@@ -70,6 +70,12 @@ jobs:
             test_el: true
             test_vc: true
           - env: |-
+              CORE_FILES=grandine-cl-only.yml:grandine-vc-only.yml:nimbus-el.yml
+              FEE_RECIPIENT=0xDccf8451070a86183eE70D330C4c43b686E9CF86
+            test_cl: true
+            test_el: true
+            test_vc: true
+          - env: |-
               CORE_FILES=grandine-plugin.yml:lighthouse-vc-only.yml:nethermind.yml
               FEE_RECIPIENT=0xDccf8451070a86183eE70D330C4c43b686E9CF86
               NM_DOCKER_REPO=sifrai/grandine
